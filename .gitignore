@@ -1,4 +1,6 @@
 config.json
+*example.json
 dev.json
 test.js
+*.sqlite
 /node_modules

@@ -1,10 +1,11 @@
-// var sqlite3 = require('sqlite3').verbose();
-// var db = new sqlite3.Database(':memory:');
+var sqlite3 = require('sqlite3').verbose();
+var db = new sqlite3.Database('./example.sqlite');
 const render = require('json-templater/string');
 const rp = require('request-promise');
 const config = require('./config');
 const dev = require('./dev');
 var accountDetails = {};
+var manifest;
 
 // Flow
 // Startup
@@ -68,8 +69,16 @@ async function populateCreds() {
   console.log(accountDetails.currentActivityHash)
 }
 
-populateCreds();
+async function getManifest() {
+  manifest = (await get({
+    uri: config.endpoints.getManifest.uri
+  })).Response;
+}
 
+let hash = 1290744998;
+db.each(`SELECT json FROM DestinyActivityDefinition WHERE id IS ${hash | 0}`, function (err, json) {
+  console.log(JSON.stringify(json));
+});
 
 
 // const getCurrentActivity = async (membershipType, displayName) => await rp({
