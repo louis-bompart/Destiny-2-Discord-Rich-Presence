@@ -1,3 +1,4 @@
 config.json
 dev.json
 test.js
+/node_modules
