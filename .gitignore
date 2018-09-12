@@ -4,3 +4,4 @@ dev.json
 test.js
 *.sqlite
 /node_modules
+/manifests/*
