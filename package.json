@@ -9,10 +9,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "better-sqlite3": "^4.1.4",
     "json-templater": "^1.2.0",
     "request": "^2.88.0",
     "request-promise": "^4.2.2",
-    "sqlite3": "^4.0.2",
     "unzip-stream": "^0.3.0"
   },
   "devDependencies": {

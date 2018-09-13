@@ -1,4 +1,4 @@
-const sqlite3 = require('sqlite3').verbose();
+const Sqlite = require('better-sqlite3');
 const render = require('json-templater/string');
 const rp = require('request-promise');
 const unzip = require('unzip-stream');
@@ -6,8 +6,7 @@ const request = require('request');
 const config = require('./config');
 const dev = require('./dev');
 
-let accountDetails, db = {};
-let hash = 1290744998;
+// let accountDetails, db = {};
 
 // Flow
 // Startup
@@ -20,19 +19,6 @@ let hash = 1290744998;
 // On refresh
 // 3, 4, 5
 
-// Gets the manfest
-// Downloads and unzips the latest mobile content
-// Creates a new db after closing the old db
-async function loadDb() {
-  if (!db) db.close();
-  let manifest = (await get({
-    uri: config.endpoints.getManifest.uri
-  })).Response;
-  request(`https://bungie.net${manifest.mobileWorldContentPaths.en}`)
-    .pipe(unzip.Extract({ path: `./manifests` }));
-  db = new sqlite3.Database(`./manifests/${manifest.mobileWorldContentPaths.en.substring(manifest.mobileWorldContentPaths.en.lastIndexOf('/') + 1)}`)
-}
-
 // Generic request function
 async function get(data) {
   return await rp({
@@ -43,9 +29,31 @@ async function get(data) {
   });
 }
 
+// Gets the manifest
+// Downloads and unzips the latest mobile content
+// Creates a new db after closing the old db
+async function loadDb() {
+  let manifest = (await get({
+    uri: config.endpoints.getManifest.uri
+  })).Response;
+  request(`https://bungie.net${manifest.mobileWorldContentPaths.en}`)
+    .pipe(unzip.Extract({ path: `./manifests` }));
+  return `./manifests/${manifest.mobileWorldContentPaths.en.substring(manifest.mobileWorldContentPaths.en.lastIndexOf('/') + 1)}`;
+}
+
+// Gets the definition of a hash using mobile db
+async function identifyHash(activity) {
+  if (activity.currentActivityHash === 0) return { activity: 'Not in an activity' };
+  const db = new Sqlite(await loadDb());
+  return db.prepare(`SELECT * FROM DestinyActivityDefinition WHERE id =?`).get(activity.currentActivityHash).json;
+}
+
 // Populates the accountDetails object with IDs, Characters, and current activity
 async function populateCreds() {
   // Get user destinyMemberID
+  // TODO
+  // Remove dev creds and add prompt
+  let accountDetails = {};
   accountDetails = Object.assign(accountDetails, (await get({
     uri: config.endpoints.getUser.uri,
     literals: {
@@ -54,7 +62,7 @@ async function populateCreds() {
     }
   })).Response[0]);
 
-  // Get user character information
+  // // Get user character information
   accountDetails = Object.assign(accountDetails, (await get({
     uri: config.endpoints.getCharacters.uri,
     components: config.endpoints.getCharacters.components,
@@ -64,7 +72,7 @@ async function populateCreds() {
     }
   })).Response);
 
-  // Determine what character has been played most recently
+  // // Determine what character has been played most recently
   accountDetails.characterId = Object
     .values(accountDetails.characters.data)
     .map(char => ({ char, lastPlayed: Number(new Date(char.dateLastPlayed)) }))
@@ -72,9 +80,9 @@ async function populateCreds() {
     .char
     .characterId
 
-  // Finds the current activity
-  // If 0, then no activity is in progress
-  accountDetails = Object.assign(accountDetails, (await get({
+  // // Finds the current activity and activityMode hashes
+  // // If 0, then no activity is in progress
+  let { currentActivityHash, currentActivityModeHash } = (await get({
     uri: config.endpoints.getActivity.uri,
     components: config.endpoints.getActivity.components,
     literals: {
@@ -82,15 +90,12 @@ async function populateCreds() {
       membershipId: accountDetails.membershipId,
       characterId: accountDetails.characterId
     }
-  })).Response.activities.data);
-  console.log(accountDetails.currentActivityHash)
+  })).Response.activities.data;
+  console.log(await identifyHash({ currentActivityHash, currentActivityModeHash }));
 }
 
+populateCreds();
 
-// db.each(`SELECT json FROM DestinyActivityDefinition WHERE id IS ${hash | 0}`, function (err, json) {
-//   if (err) console.error(err);
-//   else console.log(json);
-// });
 
 // const getCurrentActivity = async (membershipType, displayName) => await rp({
 //   uri: `${config.endpoints.base}/Destiny2/${membershipType}/Profile/${destinyMembershipID}/Character/${characterID}`,
