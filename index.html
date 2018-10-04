@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Destiny Rich Presence</title>
+  <link rel=stylesheet href=style.css />
+  <link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet">
+</head>
+
+<body>
+  <div class="titlebar"></div>
+
+  <h1>Destiny 2 RPC</h1>
+
+  <form method="get" action="presence.html" id="form">
+    <div class="inputGroup">
+      <input id="pc" value="4" name="platform" type="radio" />
+      <label for="pc">Desktop</label>
+    </div>
+    <div class="inputGroup">
+      <input id="playstation" value="2" name="platform" type="radio" />
+      <label for="playstation">Playstation</label>
+    </div>
+    <div class="inputGroup">
+      <input id="xbox" value="1" name="platform" type="radio" />
+      <label for="xbox">XBox</label>
+    </div>
+
+    <section class="flexbox hidden">
+      <div class="stretch">
+        <input type="text" id="gtag" name="gtag" placeholder="Enter your name" />
+      </div>
+      <div class="normal">
+        <button class="button"><i data-feather="log-in"></i></button>
+      </div>
+    </section>
+  </form>
+
+  <script src=forms.js></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script>
+    feather.replace({ height: '38px', width: '38px' })
+  </script>
+</body>
+
+</html>

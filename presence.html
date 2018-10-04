@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Destiny Rich Presence</title>
+  <link rel=stylesheet href=style.css />
+  <link href="https://fonts.googleapis.com/css?family=Fira+Sans:300,400,500" rel="stylesheet">
+</head>
+
+<body>
+
+  <div class="titlebar"></div>
+
+  <div class="playercard">
+    <img class="emblem" id="emblem">
+    <div class="username" id="username"></div>
+    <div class="class" id="class"></div>
+    <div class="light" id="light"></div>
+    <div class="level" id="level"></div>
+  </div>
+  
+  <div class="anchored">
+    <button class="hidden" id="go-back" onclick="goBack()"></button>
+    <label class="slide-left" for="go-back"><i data-feather="arrow-left"></i></label>
+  </div>
+
+  <script src=presence.js></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script>
+    feather.replace({ height: '38px', width: '38px' })
+    function goBack() {
+      window.history.back();
+    }
+  </script>
+</body>
+
+</html>
