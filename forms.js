@@ -1,9 +1,7 @@
 'use strict';
 
 document.getElementsByTagName('input')[0].onchange = function(){ flexbox(this, 'pc'); }
-
 document.getElementsByTagName('input')[1].onchange = function(){ flexbox(this, 'playstation'); }
-
 document.getElementsByTagName('input')[2].onchange = function(){ flexbox(this, 'xbox'); }
 
 function flexbox(input, platform) {

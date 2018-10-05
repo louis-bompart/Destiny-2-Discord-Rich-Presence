@@ -16,6 +16,10 @@ h1 {
   font-size: 34px;
 }
 
+h2 {
+  margin: 0 0 10px 20px;
+}
+
 .titlebar {
   position: fixed;
   width: 100%;
@@ -47,12 +51,24 @@ h1 {
   transition: left 300ms;
 }
 
+.slide-right {
+  position: relative;
+  right: 3px;
+  transition: right 300ms;
+}
+
+.slide-right:hover {
+  position: relative;
+  right: -2px;
+  transition: right 300ms;
+}
+
 .playercard {
   position: relative;
   display: block;
   height: 96px;
   width: 474px;
-  margin: 50px 0 20px 23px;
+  margin: 50px 0 20px 20px;
 }
 
 .emblem {
@@ -93,8 +109,42 @@ h1 {
   font-weight: 400;
 }
 
-/* Flexbox Stuff */
+.rp-preview {
+  margin: 0 0 0 23px;
+}
 
+/* Error Popup */
+/* ------------------------------------------------ */
+
+.error {
+  position: absolute;
+  top: 0px;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0,0,0,0.7);
+  z-index: 998;
+}
+
+.popup {
+  position: relative;
+  top: 140px;
+  width: 320px;
+  padding: 20px;
+  margin: auto;
+  background: #1b222c;
+  border-radius: 5px;
+  z-index: 999;
+  text-align: center;
+}
+
+.button-back {
+  background: #516F7D;
+  padding: 10px 15px 10px 15px;
+  border-radius: 5px;
+  font-size: 18px;
+}
+
+/* Flexbox Stuff */
 /* ------------------------------------------------ */
 
 .flexbox {
@@ -151,8 +201,65 @@ h1 {
   padding-left: 5px;
 }
 
-/* Radio Boxes */
+/* Presence Container */
+/* --------------------------------------------------- */
 
+.rp-preview {
+  background: #6c82ce;
+  margin: 0 20px 0 20px;
+  border-radius: 10px;
+  padding: 15px;
+}
+
+.vertical-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.horizontal-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.flex {
+  flex: 1;
+}
+
+.icon {
+  height: 90px;
+  width: 90px;
+  border-radius: 5px;
+}
+
+.presence-type {
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.presence-details {
+  list-style: none;
+  margin: 0 0 0 -20px;
+}
+
+.presence-details li {
+  margin: 0 0 3px;
+}
+
+#activity, #location, #time {
+  font-weight: 300;
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.8)
+}
+
+#game-title {
+  font-weight: 500;
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.8)
+}
+
+
+/* Radio Boxes */
 /* --------------------------------------------------- */
 
 .inputGroup {
@@ -192,7 +299,6 @@ h1 {
 }
 
 /* Needed Stuff idk */
-
 /* ------------------------------------------- */
 
 *, *::before, *::after {
@@ -204,8 +310,16 @@ h1 {
   display: none;
 }
 
-/* Platform style changes */
+.grow {
+  display: inline-block;
+  transition: all .2s ease-in-out;
+}
 
+.grow:hover {
+  transform: scale(1.05);
+}
+
+/* Platform style changes */
 /* ---------------------------------------- */
 
 .inputGroup input:checked~label[for="pc"] {

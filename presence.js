@@ -7,33 +7,6 @@ const config = require('./config');
 const path = require('path');
 const fs = require('fs');
 
-let parameters = new URLSearchParams(window.location.search);
-
-window.onload = async function () {
-  let { membershipId, membershipType } = await searchPlayers(parameters.get('platform'), encodeURIComponent(parameters.get('gtag')));
-  let character = await getRecentCharacter(membershipId, membershipType);
-  document.getElementById("emblem").src = `https://bungie.net${character.emblemBackgroundPath}`;
-  document.getElementById("username").textContent = parameters.get('gtag').split('#')[0];
-  document.getElementById("class").textContent = determineClass(character.classType);
-  document.getElementById("light").textContent = character.light;
-  document.getElementById("level").textContent = `Level ${character.baseCharacterLevel}`;
-  let { currentActivityHash, currentActivityModeHash } = await findCurrentActivity(character.characterId, membershipId, membershipType);
-  // let filteredActivity = await identifyHash(currentActivityHash);
-  // let filteredActivityMode = await identifyHash(currentActivityModeHash);
-  // console.log(filteredActivity);
-  // console.log(filteredActivityMode);
-
-}
-
-function determineClass(type) {
-  switch (type) {
-    case 0: return 'Titan';
-    case 1: return 'Hunter';
-    case 2: return 'Warlock';
-    case 3: return 'Unknown'
-  }
-}
-
 // Flow
 // Startup
 // 1. Get account type
@@ -73,10 +46,9 @@ async function loadDb() {
 }
 
 // Gets the definition of a hash using mobile db
-async function identifyHash(hash) {
-  if (hash === 0) return { hash: 'Not in an activity' };
+async function identifyHash(hash, table) {
   const db = new Sqlite(await loadDb());
-  return db.prepare(`SELECT * FROM DestinyActivityModeDefinition WHERE id =?`).get(hash | 0).json;
+  return db.prepare(`SELECT * FROM Destiny${table}Definition WHERE id =?`).get(hash | 0).json;
 }
 
 // Searches for players using their platform and display name
@@ -89,7 +61,7 @@ async function searchPlayers(platform, name) {
       displayName: name
     }
   })
-  if (!res.Response) return { Error: 'No such player' }
+  if (res.Response.length === 0) return { membershipId: -1, membershipType: -1 }
   else return res.Response[0];
 }
 
@@ -126,18 +98,3 @@ async function findCurrentActivity(charId, membershipId, membershipType) {
     }
   })).Response.activities.data;
 }
-
-
-// const getCurrentActivity = async (membershipType, displayName) => await rp({
-//   uri: `${config.endpoints.base}/Destiny2/${membershipType}/Profile/${destinyMembershipID}/Character/${characterID}`,
-//   headers: { 'X-API-Key': config.apiKey },
-//   qs: { 'components': 204 },
-//   json: true
-// });
-
-// IIFE
-// (
-//   async () => {
-//     console.log((await getUser('16149593')).Response);
-//   }
-// )();
