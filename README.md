@@ -7,8 +7,8 @@ I've only tested this on OSX so far, so feel free to attempt with Windows/Linux 
 Also feel free to ask about feature requests.
 
 ## Running
-First you need to create an API key at https://www.bungie.net/en/Application \n
-I'm hoping to remove this requirement in the future, but for now it works.
+First you need to create an API key at https://www.bungie.net/en/Application
+  I'm hoping to remove this requirement in the future, but for now it works.
 
 If you clone this repo, run `npm start` after installing modules with `npm i`
 
