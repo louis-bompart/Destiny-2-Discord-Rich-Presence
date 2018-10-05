@@ -1,0 +1,20 @@
+{
+  "apiKey": "706fd295249c472694e368cb6db3e996",
+  "baseURL": "https://www.bungie.net/Platform",
+  "endpoints": {
+    "getUser": {
+      "uri": "/Destiny2/SearchDestinyPlayer/{{membershipType}}/{{displayName}}/"
+    },
+    "getCharacters": {
+      "uri": "/Destiny2/{{membershipType}}/Profile/{{membershipId}}/",
+      "components": "200"
+    },
+    "getActivity": {
+      "uri": "/Destiny2/{{membershipType}}/Profile/{{membershipId}}/Character/{{characterId}}/",
+      "components": "204"
+    },
+    "getManifest": {
+      "uri": "/Destiny2/Manifest"
+    }
+  }
+}
