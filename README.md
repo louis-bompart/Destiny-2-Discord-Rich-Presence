@@ -1,10 +1,7 @@
 # Destiny-2-Discord-Rich-Presence
 
-# THIS IS NOT COMPLETED
-This is a still a work in progress. README.md will be updated when it is in a working state
-=======
-## Todo
-- Clean up user select screen
-- Add error page if bad user select
-- Clean up playercard
+## This now works!
+I haven't packaged this yet, but will soon.
 
+If you clone this repo, run `npm start` after installing modules with `npm i`
+Search your Destiny playername and if Discord is open, your presence should be populated.
