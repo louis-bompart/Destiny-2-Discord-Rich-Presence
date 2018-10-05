@@ -5,11 +5,7 @@ const unzip = require('unzip-stream');
 const request = require('request');
 const config = require('./config');
 const path = require('path');
-const dev = require('./dev');
 const fs = require('fs');
-let accountDetails = {};
-
-// let accountDetails, db = {};
 
 // Flow
 // Startup
@@ -44,77 +40,61 @@ async function loadDb() {
   let fileName = `./manifests/${path.parse(manifest.mobileWorldContentPaths.en).base}`;
   if (!fs.existsSync(fileName)) {
     request(`https://bungie.net${manifest.mobileWorldContentPaths.en}`)
-    .pipe(unzip.Extract({ path: `./manifests` }))
+      .pipe(unzip.Extract({ path: `./manifests` }))
   }
   return fileName;
 }
 
 // Gets the definition of a hash using mobile db
-async function identifyHash(activity) {
-  if (activity.currentActivityHash === 0) return { activity: 'Not in an activity' };
+async function identifyHash(hash, table) {
   const db = new Sqlite(await loadDb());
-  return db.prepare(`SELECT * FROM DestinyActivityDefinition WHERE id =?`).get(activity.currentActivityHash | 0).json;
+  return db.prepare(`SELECT * FROM Destiny${table}Definition WHERE id =?`).get(hash | 0).json;
 }
 
 // Searches for players using their platform and display name
-async function searchPlayers() {
+async function searchPlayers(platform, name) {
   // Get user destinyMemberID
-  accountDetails = Object.assign(accountDetails, (await get({
+  let res = await get({
     uri: config.endpoints.getUser.uri,
     literals: {
-      membershipType: dev.membershipType,
-      displayName: dev.displayName
+      membershipType: platform,
+      displayName: name
     }
-  })).Response[0]);
+  })
+  if (res.Response.length === 0) return { membershipId: -1, membershipType: -1 }
+  else return res.Response[0];
 }
 
-async function getCurrentCharacter() {
-  // // Get user character information
-  accountDetails = Object.assign(accountDetails, (await get({
+async function getRecentCharacter(id, type) {
+  // Get user character information
+  let res = (await get({
     uri: config.endpoints.getCharacters.uri,
     components: config.endpoints.getCharacters.components,
     literals: {
-      membershipType: accountDetails.membershipType,
-      membershipId: accountDetails.membershipId
+      membershipType: type,
+      membershipId: id
     }
-  })).Response);
+  })).Response;
 
-  // // Determine what character has been played most recently
-  accountDetails.characterId = Object
-    .values(accountDetails.characters.data)
+  // Determine what character has been played most recently
+  return Object
+    .values(res.characters.data)
     .map(char => ({ char, lastPlayed: Number(new Date(char.dateLastPlayed)) }))
     .sort((a, b) => b.lastPlayed - a.lastPlayed)[0]
     .char
-    .characterId
 }
 
 // Populates the accountDetails object with IDs, Characters, and current activity
-async function findCurrentActivity() {
-  // // Finds the current activity and activityMode hashes
-  // // If 0, then no activity is in progress
-  let { currentActivityHash, currentActivityModeHash } = (await get({
+async function findCurrentActivity(charId, membershipId, membershipType) {
+  // Finds the current activity and activityMode hashes
+  // If 0, then no activity is in progress
+  return (await get({
     uri: config.endpoints.getActivity.uri,
     components: config.endpoints.getActivity.components,
     literals: {
-      membershipType: accountDetails.membershipType,
-      membershipId: accountDetails.membershipId,
-      characterId: accountDetails.characterId
+      membershipType: membershipType,
+      membershipId: membershipId,
+      characterId: charId
     }
   })).Response.activities.data;
-  console.log(await identifyHash({ currentActivityHash, currentActivityModeHash }));
 }
-
-
-// const getCurrentActivity = async (membershipType, displayName) => await rp({
-//   uri: `${config.endpoints.base}/Destiny2/${membershipType}/Profile/${destinyMembershipID}/Character/${characterID}`,
-//   headers: { 'X-API-Key': config.apiKey },
-//   qs: { 'components': 204 },
-//   json: true
-// });
-
-// IIFE
-// (
-//   async () => {
-//     console.log((await getUser('16149593')).Response);
-//   }
-// )();
