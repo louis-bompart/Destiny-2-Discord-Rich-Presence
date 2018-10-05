@@ -1,5 +1,5 @@
 {
-  "apiKey": "706fd295249c472694e368cb6db3e996",
+  "apiKey": "YOUR_KEY_HERE",
   "baseURL": "https://www.bungie.net/Platform",
   "endpoints": {
     "getUser": {
