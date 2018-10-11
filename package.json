@@ -1,26 +1,38 @@
 {
   "name": "destiny-2-discord-rich-presence",
-  "version": "1.0.2",
-  "description": "",
-  "main": "main.js",
+  "productName": "Destiny 2 RPC",
+  "version": "1.1.0",
+  "description": "A discord rich presence client for destiny 2",
+  "main": "./app/main.js",
   "scripts": {
-    "start": "electron .",
-    "watch": "nodemon --watch index.html --exec \"electron .\""
+    "start": "electron ./app/main.js",
+    "watch": "nodemon --watch index.html --exec \"electron ./app/main.js\"",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder -mwl"
   },
-  "author": "",
+  "build": {
+    "appId": "com.electron.d2rpc",
+    "dmg": {
+      "icon": "build/icon.icns"
+    }
+  },
+  "author": "Duke Trammell",
   "license": "ISC",
   "dependencies": {
     "better-sqlite3": "^4.1.4",
     "discord-rpc": "^3.0.1",
+    "electron-default-menu": "^1.0.1",
     "feather-icons": "^4.7.3",
-    "json-templater": "^1.2.0",
+    "fs": "0.0.1-security",
+    "node-stream-zip": "^1.7.0",
     "path": "^0.12.7",
+    "register-scheme": "0.0.2",
     "request": "^2.88.0",
     "request-promise": "^4.2.2",
-    "unzip-stream": "^0.3.0",
     "url": "^0.11.0"
   },
   "devDependencies": {
-    "electron": "2.0.9"
+    "electron": "2.0.9",
+    "electron-builder": "^20.28.4"
   }
 }

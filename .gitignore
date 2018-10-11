@@ -2,3 +2,4 @@
 /node_modules
 /manifests/*
 /tests/*
+/dist/*

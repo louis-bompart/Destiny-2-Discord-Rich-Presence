@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Destiny Rich Presence</title>
+  <link rel=stylesheet href=style.css />
+  <link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet">
+</head>
+
+<body>
+  <div class="titlebar"></div>
+
+  <div name="no-api-key" class="error hidden">
+    <div class="popup">
+      <h1 style="margin: -10px 0 5px;">No API key found</h1>
+      <div>Please enter a valid API key below.</div>
+      <form onsubmit="return hidePopUp()">
+        <div class="flexbox">
+          <div class="stretch">
+            <input type="text" id="api-key" name="api-key" />
+          </div>
+          <div class="normal">
+            <button class="button"><i data-feather="log-in" class="slide-right"></i></button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <h1>Destiny 2 RPC</h1>
+
+  <form method="get" action="presence.html" id="form">
+    <div class="inputGroup">
+      <input id="pc" value="4" name="platform" type="radio" />
+      <label for="pc">Desktop</label>
+    </div>
+    <div class="inputGroup">
+      <input id="playstation" value="2" name="platform" type="radio" />
+      <label for="playstation">Playstation</label>
+    </div>
+    <div class="inputGroup">
+      <input id="xbox" value="1" name="platform" type="radio" />
+      <label for="xbox">XBox</label>
+    </div>
+
+    <div name="gtag-input" class="flexbox hidden">
+      <div class="stretch">
+        <input type="text" autocomplete="on" id="gtag" name="gtag" placeholder="Enter your name" />
+      </div>
+      <div class="normal">
+        <button class="button" type="submit"><i data-feather="log-in" class="slide-right"></i></button>
+      </div>
+    </div>
+  </form>
+
+  <script src=forms.js></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script>
+    feather.replace({ height: '38px', width: '38px' })
+  </script>
+</body>
+
+</html>
