@@ -11,7 +11,7 @@ Finally, search your Destiny playername and if Discord is open, your presence sh
 The first time run, the presence may not update immediately. This is due to the time required to download the manifest to lookup activity definitions. If it doesn't update within 30 reload the page with `cmd+r` or `ctrl+r` 
 
 ### TODO
-- Spiffying up the code
-- Adding a history to playersearch
-- Affinitization
-- Add Destiny Icons courtesy of [JustRealMilk](https://github.com/justrealmilk/destiny-icons)
+- Spiffying up the code   
+- Adding a history to playersearch   
+- Affinitization   
+- Add Destiny Icons courtesy of [JustRealMilk](https://github.com/justrealmilk/destiny-icons)   
