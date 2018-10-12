@@ -14,3 +14,4 @@ The first time run, the presence may not update immediately. This is due to the 
 - Spiffying up the code
 - Adding a history to playersearch
 - Affinitization
+- Add Destiny Icons courtesy of [JustRealMilk](https://github.com/justrealmilk/destiny-icons)
