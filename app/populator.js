@@ -5,6 +5,7 @@ let parameters = new URLSearchParams(window.location.search);
 
 window.onload = async function () {
   const { membershipId, membershipType } = await searchPlayers(parameters.get('platform'), encodeURIComponent(parameters.get('gtag')));
+  // Remove localStorage usage and instead use queries?
   localStorage.setItem('membershipId', membershipId);
   localStorage.setItem('membershipType', membershipType);
   if (membershipId === -1) {
