@@ -131,6 +131,6 @@ function determineClass(type) {
     case 0: return 'Titan';
     case 1: return 'Hunter';
     case 2: return 'Warlock';
-    case 3: return 'Error, wrong class type'
+    default: return 'Error, wrong class type'
   }
 }
