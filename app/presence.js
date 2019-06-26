@@ -1,6 +1,5 @@
 const Sqlite = require('better-sqlite3');
 const { remote } = require('electron');
-const rp = require('request-promise');
 let SZIP = require('node-stream-zip');
 const request = require('request');
 const path = require('path');
@@ -10,12 +9,19 @@ const apiKey = localStorage.getItem('apiKey');
 
 // Generic request promise function
 async function get(data) {
-  return await rp({
-    uri: 'https://www.bungie.net/Platform' + data.uri,
-    headers: { 'X-API-Key': apiKey },
-    qs: { components: data.components },
-    json: true
+  const url = new URL(`https://www.bungie.net/Platform/${data.uri}`);
+  // Normalize components as an array.
+  if (data.components) {
+    data.components = Array.isArray(data.components) ? data.components : [data.components]
+    url.searchParams.set('components', data.components.join(','))
+  }
+  
+  response = await fetch(url, {
+    headers: { 'X-API-Key': apiKey }
+  }).catch(e => {
+    console.error(e);
   });
+  return response.json();
 }
 
 // Gets the manifest

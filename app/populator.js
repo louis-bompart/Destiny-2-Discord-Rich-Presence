@@ -16,6 +16,8 @@ window.onload = async function () {
   }
 }
 
+if (document.readyState === 'complete') window.onload();
+
 // Pull data from Bungie API
 // Also update the playercard
 async function pullNewData(membershipId, membershipType) {
