@@ -1,7 +1,7 @@
 {
   "name": "destiny-2-discord-rich-presence",
   "productName": "Destiny 2 RPC",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "A discord rich presence client for destiny 2",
   "main": "./app/main.js",
   "scripts": {
