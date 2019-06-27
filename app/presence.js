@@ -15,8 +15,8 @@ async function get(data) {
     data.components = Array.isArray(data.components) ? data.components : [data.components]
     url.searchParams.set('components', data.components.join(','))
   }
-
-  response = await fetch(url, {
+  
+  const response = await fetch(url, {
     headers: { 'X-API-Key': apiKey }
   }).catch(e => {
     console.error(e);
