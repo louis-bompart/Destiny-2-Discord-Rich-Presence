@@ -15,7 +15,7 @@ async function get(data) {
     data.components = Array.isArray(data.components) ? data.components : [data.components]
     url.searchParams.set('components', data.components.join(','))
   }
-  
+
   response = await fetch(url, {
     headers: { 'X-API-Key': apiKey }
   }).catch(e => {
@@ -45,8 +45,9 @@ async function loadDb() {
   }
   let userDataPath = remote.app.getPath('userData');
   let fileName = path.parse(manifest.mobileWorldContentPaths.en).base.split('.')[0];
-  let zipped = `${userDataPath}/manifests/zipped/${fileName}.zip`;
-  let extracted = `${userDataPath}/manifests/extracted/${fileName}.content`;
+  let zipped = path.join(userDataPath, 'manifests', 'zipped', `${fileName}.zip`);
+  let extracted = path.join(userDataPath, 'manifests', 'extracted', `${fileName}.content`);
+
 
   if (!fs.existsSync(`${userDataPath}/manifests`)) {
     fs.mkdirSync(`${userDataPath}/manifests/`);
@@ -80,8 +81,8 @@ async function loadDb() {
 
 // Gets the definition of a hash using mobile db
 async function identifyHash(hash, table) {
-  let path = await loadDb();
-  const db = new Sqlite(path);
+  const dbPath = await loadDb();
+  const db = new Sqlite(dbPath);
   return db.prepare(`SELECT * FROM Destiny${table}Definition WHERE id =?`).get(hash | 0).json;
 }
 
