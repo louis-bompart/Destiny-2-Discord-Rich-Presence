@@ -15,7 +15,7 @@ async function get(data) {
     data.components = Array.isArray(data.components) ? data.components : [data.components]
     url.searchParams.set('components', data.components.join(','))
   }
-  
+
   const response = await fetch(url, {
     headers: { 'X-API-Key': apiKey }
   }).catch(e => {
@@ -43,39 +43,46 @@ async function loadDb() {
       'X-API-Key': apiKey
     }
   }
+  
+  console.debug(`manifestRep:${JSON.stringify(rep)}`);
   let userDataPath = remote.app.getPath('userData');
+  console.debug(`userDataPath:${userDataPath}`);
   let fileName = path.parse(manifest.mobileWorldContentPaths.en).base.split('.')[0];
+  console.debug(`userDataPath:${fileName}`);
   let zipped = path.join(userDataPath, 'manifests', 'zipped', `${fileName}.zip`);
+  console.debug(`manifestRep:${JSON.stringify(zipped)}`);
   let extracted = path.join(userDataPath, 'manifests', 'extracted', `${fileName}.content`);
+  console.debug(`manifestRep:${JSON.stringify(extracted)}`);
 
-
-  if (!fs.existsSync(`${userDataPath}/manifests`)) {
-    fs.mkdirSync(`${userDataPath}/manifests/`);
-    fs.mkdirSync(`${userDataPath}/manifests/extracted`);
-    fs.mkdirSync(`${userDataPath}/manifests/zipped`);
+  fs.mkdirSync(path.join(userDataPath, 'manifests', { recursive: true }))
+  try {
+    fs.accessSync(extracted, fs.constants.W_OK)
+  } catch (error) {
+    if (error !== 'ENOENT') {
+      throw error;
+    }
   }
-  if (!fs.existsSync(extracted)) {
-    let outStream = fs.createWriteStream(zipped);
-    console.log('Manifest Not Found.\nDownloading Now')
-    request(options)
-      .pipe(outStream)
-      .on('finish', function () {
-        let zip = new SZIP({
-          file: zipped,
-          storeEntries: true
-        });
-        zip.on('ready', function () {
-          zip.extract(`${fileName}.content`, extracted, function (err) {
-            if (err) console.log(err);
-          });
-        });
-        zip.on('extract', function () {
-          let membershipId = localStorage.getItem('membershipId');
-          let membershipType = localStorage.getItem('membershipType');
-          pullNewData(membershipId, membershipType);
+
+  let outStream = fs.createWriteStream(zipped);
+  console.log('Manifest Not Found.\nDownloading Now')
+  request(options)
+    .pipe(outStream)
+    .on('finish', function () {
+      let zip = new SZIP({
+        file: zipped,
+        storeEntries: true
+      });
+      zip.on('ready', function () {
+        zip.extract(`${fileName}.content`, extracted, function (err) {
+          if (err) console.log(err);
         });
       });
-  }
+      zip.on('extract', function () {
+        let membershipId = localStorage.getItem('membershipId');
+        let membershipType = localStorage.getItem('membershipType');
+        pullNewData(membershipId, membershipType);
+      });
+    });
   return extracted;
 }
 
