@@ -8,7 +8,7 @@
     "start": "electron ./app/main.js",
     "watch": "nodemon --watch index.html --exec \"electron ./app/main.js\"",
     "pack": "electron-builder --dir",
-    "dist": "electron-builder -mw"
+    "dist": "electron-builder -w"
   },
   "build": {
     "appId": "com.electron.d2rpc",
