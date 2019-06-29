@@ -5,7 +5,7 @@ const request = require('request');
 const path = require('path');
 const fs = require('fs');
 const apiKey = localStorage.getItem('apiKey');
-
+let downloadPromise = null;
 
 // Generic request promise function
 async function get(data) {
@@ -43,8 +43,8 @@ async function loadDb() {
       'X-API-Key': apiKey
     }
   }
-  
-  console.debug(`manifestRep:${JSON.stringify(rep)}`);
+
+  console.debug(`manifestRep:${JSON.stringify(manifest)}`);
   let userDataPath = remote.app.getPath('userData');
   console.debug(`userDataPath:${userDataPath}`);
   let fileName = path.parse(manifest.mobileWorldContentPaths.en).base.split('.')[0];
@@ -54,38 +54,63 @@ async function loadDb() {
   let extracted = path.join(userDataPath, 'manifests', 'extracted', `${fileName}.content`);
   console.debug(`manifestRep:${JSON.stringify(extracted)}`);
 
-  fs.mkdirSync(path.join(userDataPath, 'manifests', { recursive: true }))
   try {
-    fs.accessSync(extracted, fs.constants.W_OK)
+    fs.accessSync(path.parse(zipped).dir, fs.constants.F_OK);
   } catch (error) {
-    if (error !== 'ENOENT') {
+    if (error.code !== 'ENOENT') {
+      throw error;
+    }
+    fs.mkdirSync(path.parse(zipped).dir, { recursive: true })
+  }
+
+  try {
+    fs.accessSync(path.parse(extracted).dir, fs.constants.F_OK);
+  } catch (error) {
+    if (error.code !== 'ENOENT') {
+      throw error;
+    }
+    fs.mkdirSync(path.parse(extracted).dir, { recursive: true })
+  }
+
+  try {
+    fs.accessSync(extracted, fs.constants.R_OK)
+    return Promise.resolve(extracted)
+  } catch (error) {
+    if (error.code !== 'ENOENT') {
       throw error;
     }
   }
+  // Storing the promise allow to debounce the calls
+  if (!downloadPromise) {
+    downloadPromise = new Promise((resolve, reject) => {
+      console.log('Manifest Not Found.\nDownloading Now')
+      request(options)
+        .pipe(fs.createWriteStream(zipped)
+          .on('close', function () {
+            let zip = new SZIP({
+              file: zipped,
+              storeEntries: true
+            });
+            zip.on('ready', function () {
+              zip.extract(`${fileName}.content`, extracted, function (err) {
+                if (err) console.log(err);
+                let membershipId = localStorage.getItem('membershipId');
+                let membershipType = localStorage.getItem('membershipType');
+                pullNewData(membershipId, membershipType);
+                zip.close(() => {
+                  downloadPromise = null;
+                  resolve(extracted);
+                })
 
-  let outStream = fs.createWriteStream(zipped);
-  console.log('Manifest Not Found.\nDownloading Now')
-  request(options)
-    .pipe(outStream)
-    .on('finish', function () {
-      let zip = new SZIP({
-        file: zipped,
-        storeEntries: true
-      });
-      zip.on('ready', function () {
-        zip.extract(`${fileName}.content`, extracted, function (err) {
-          if (err) console.log(err);
-        });
-      });
-      zip.on('extract', function () {
-        let membershipId = localStorage.getItem('membershipId');
-        let membershipType = localStorage.getItem('membershipType');
-        pullNewData(membershipId, membershipType);
-      });
+              });
+
+            });
+
+          }));
     });
-  return extracted;
+  }
+  return downloadPromise
 }
-
 // Gets the definition of a hash using mobile db
 async function identifyHash(hash, table) {
   const dbPath = await loadDb();
